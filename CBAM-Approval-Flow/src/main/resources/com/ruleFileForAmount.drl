@@ -1,0 +1,21 @@
+package com;
+
+rule "one"
+    ruleflow-group "amount-validation"
+    when
+       a: com.RuleValueStorage( amount <= 50)
+    then
+       modify( a ) {
+				setValid( "false" )
+		}
+end
+
+rule "two"
+    ruleflow-group "amount-validation"
+    when
+       a: com.RuleValueStorage( amount > 50)
+    then
+       modify( a ) {
+				setValid( "true" )
+		}
+end
