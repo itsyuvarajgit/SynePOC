@@ -1,0 +1,75 @@
+package com;
+
+import java.lang.String;
+
+//from row number: 1 - Approve case
+//Next Node for first element
+rule "Next-Node-Rule-first-element"
+  ruleflow-group "next-node"
+	dialect "java"
+	when
+	   // System.out.println("coming inside rule");
+		result : Result( eval(approverList != null), eval( approverList.indexOf(currentNode) ==0  && approverList.indexOf(currentNode) != (approverList.size() -1) ))
+		nextNodeDetails : NodeDetails( eval( true ))
+		approval : ApprovalDetails( approvalStatus == "APPROVED" )
+	then
+	    System.out.println("coming inside then condition of rule : result.getApproverList()" + result.getApproverList());
+	     System.out.println("result.getCurrentNode() : "+result.getCurrentNode() );
+	    System.out.println("result.getApproverList().indexOf(result.getCurrentNode() : "+result.getApproverList().indexOf(result.getCurrentNode()));
+		nextNodeDetails.setNextNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) +1));
+		result.setCurrentNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) +1));
+end
+
+//from row number: 2 - Approve case
+//Next Node
+rule "Next-Node-Rule-middle-element"
+  ruleflow-group "next-node"
+	dialect "java"
+	when
+	   // System.out.println("coming inside rule");
+		result : Result( eval(approverList != null), eval( approverList.indexOf(currentNode) > 0 && approverList.indexOf(currentNode) != (approverList.size() -1) ))
+		nextNodeDetails : NodeDetails( eval( true ))
+		approval : ApprovalDetails( approvalStatus == "APPROVED" )
+	then
+	    System.out.println("coming inside then condition of SECOND rule : result.getApproverList()" + result.getApproverList());
+	     System.out.println("result.getCurrentNode() : "+result.getCurrentNode() );
+	    System.out.println("result.getApproverList().indexOf(result.getCurrentNode() : "+result.getApproverList().indexOf(result.getCurrentNode()));
+		nextNodeDetails.setNextNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) +1));
+		result.setCurrentNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) +1));
+end
+
+//from row number: 3 - Approve case
+//Next Node
+rule "Next-Node-Rule-last-element"
+  ruleflow-group "next-node"
+	dialect "java"
+	when
+	   // System.out.println("coming inside rule");
+		result : Result( eval(approverList != null), eval( approverList.indexOf(currentNode) == (approverList.size() -1) ))
+		nextNodeDetails : NodeDetails( eval( true ))
+		approval : ApprovalDetails( approvalStatus == "APPROVED" )
+	then
+	    System.out.println("coming inside then condition of THIRD rule : result.getApproverList()" + result.getApproverList());
+	     System.out.println("result.getCurrentNode() : "+result.getCurrentNode() );
+	    System.out.println("result.getApproverList().indexOf(result.getCurrentNode() : "+result.getApproverList().indexOf(result.getCurrentNode()));
+		nextNodeDetails.setNextNode("END");
+end
+
+//from row number: 4 - REJECT Case
+//Next Node
+rule "Next-Node-Rule-reject"
+  ruleflow-group "next-node"
+	dialect "java"
+	when
+	   // System.out.println("coming inside rule");
+		result : Result( eval(approverList != null), eval( approverList.indexOf(currentNode) > 0))
+		nextNodeDetails : NodeDetails( eval( true ))
+		approval : ApprovalDetails( approvalStatus == "REJECTED" )
+	then
+	    System.out.println("coming inside then condition of FOURTH rule- REJECT CASE : result.getApproverList()" + result.getApproverList());
+	     System.out.println("result.getCurrentNode() : "+result.getCurrentNode() );
+	    System.out.println("result.getApproverList().indexOf(result.getCurrentNode() : "+result.getApproverList().indexOf(result.getCurrentNode()));
+		nextNodeDetails.setNextNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) -1));
+		result.setCurrentNode(result.getApproverList().get(result.getApproverList().indexOf(result.getCurrentNode()) -1));
+end
+
