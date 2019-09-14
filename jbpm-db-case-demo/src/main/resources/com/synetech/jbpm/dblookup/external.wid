@@ -1,0 +1,31 @@
+[
+  [
+    "name" : "DBService",
+    "parameters" : [
+     "url" : new StringDataType(),
+     "query": new StringDataType(),
+    ],
+    "results" :  [
+        "numOfRecords" : new IntegerDataType(),
+        "name" : new StringDataType();
+    ],
+    "displayName" : "DB Calls from jbpm",
+    "icon" : "defaultservicenodeicon.png"
+  ],
+  
+    [
+    "name" : "DBPollService",
+    "parameters" : [
+     "url" : new StringDataType(),
+     "query" : new StringDataType()
+    ],
+    "results" :  [
+        "errorDetails" : new ObjectDataType("java.util.HashMap"),
+        "validationErrorsExist" : new BooleanDataType(),
+        "processingErrorsExist" : new BooleanDataType(),
+        "runtimeErrorsExist" : new BooleanDataType()
+    ],
+    "displayName" : "Poll DB from jbpm",
+    "icon" : "defaultservicenodeicon.png"
+  ]
+]
