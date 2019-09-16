@@ -33,23 +33,34 @@ public class DBPollServiceHandler implements WorkItemHandler
 
         String url = (String)workItem.getParameter("url");
         String query = (String)workItem.getParameter("query");
-
-        System.out.println(url);
-        System.out.println(query);
-
-        Map<String, ArrayList<ErrorDetails>> errorDetails = getErrorDetails(url, query);
+        Map<String, ArrayList<ErrorDetails>> errorDetails = (Map<String, ArrayList<ErrorDetails>> )workItem.getParameter("errorDetails");
+        String errorType = (String)workItem.getParameter("errorType");
         
-        results.put("errorDetails", errorDetails);
-        if(errorDetails.get("VALIDATION")!=null){
-            results.put("validationErrorsExist", true);
-        } 
-        if(errorDetails.get("PROCESSING")!=null){
-            results.put("processingErrorsExist", true);
-        }
-        if(errorDetails.get("RUNTIME")!=null){
-             results.put("runtimeErrorsExist", true);
-        }
+        System.out.println(url);
+        //System.out.println(query);
 
+        if(errorDetails!=null){
+            ArrayList<ErrorDetails> errors = errorDetails.get(errorType);
+            ArrayList<Integer> ids = new ArrayList<>();
+            for(ErrorDetails d : errors) {
+                ids.add(d.getId());
+            }
+            String inCondition = ids.toString().replace("[","(").replace("]",")");
+            updateErrorDetails(url, query+" "+inCondition, errorType);
+        } else {
+            errorDetails = getErrorDetails(url, query);
+            
+            results.put("errorDetails", errorDetails);
+            if(errorDetails.get("VALIDATION")!=null){
+                results.put("validationErrorsExist", true);
+            } 
+            if(errorDetails.get("PROCESSING")!=null){
+                results.put("processingErrorsExist", true);
+            }
+            if(errorDetails.get("RUNTIME")!=null){
+                 results.put("runtimeErrorsExist", true);
+            }
+        }
         manager.completeWorkItem(workItem.getId(), results);
     }
 
@@ -83,7 +94,9 @@ public class DBPollServiceHandler implements WorkItemHandler
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             // loop through the result set
+            int count=0;
             while (rs.next()) {
+                count++;
                 ErrorDetails details = new ErrorDetails();
                 details.setId(rs.getInt("ID"));
                 details.setErrorType(rs.getString("ERROR_TYPE"));
@@ -106,12 +119,38 @@ public class DBPollServiceHandler implements WorkItemHandler
                 Statement updStmt = conn.createStatement();
                 updStmt.executeUpdate(updateSql + formattedIds);
             }
-            
-            System.out.println("executed getErrorDetails... DONE");
-            
+            System.out.println("\n\n\n\n");
+            System.out.println("----------------------------------------------");
+            System.out.println("Found "+count+" unprocessed records from db table.");
+            System.out.println("Seggregating records as per error type");
+            for(String errorType : results.keySet()){
+                ArrayList<ErrorDetails> list = results.get(errorType);
+                System.out.println("ErrorType: " +errorType+", Records count: "+list.size());
+            }   
+            System.out.println("----------------------------------------------");
+            System.out.println("\n\n\n\n");    
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return results;
     }
+    
+    public void updateErrorDetails(String url, String sql , String errorType) {
+         try {
+            System.out.println("\nupdate query :: "+sql);
+            Connection conn = this.connect(url);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+
+            System.out.println("\n\n\n\n");
+            System.out.println("----------------------------------------------");
+            System.out.println("Updated "+errorType+" records to COMPLETE");
+            System.out.println("----------------------------------------------");
+            System.out.println("\n\n\n\n");
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
 }

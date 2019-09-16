@@ -27,5 +27,18 @@
     ],
     "displayName" : "Poll DB from jbpm",
     "icon" : "defaultservicenodeicon.png"
+  ],
+  
+      [
+    "name" : "DBPollStatusUpdateService",
+    "parameters" : [
+     "url" : new StringDataType(),
+     "query" : new StringDataType(),
+     "errorDetails" : new ObjectDataType("java.util.HashMap"),
+     "errorType" : new StringDataType()
+    ],
+    "displayName" : "Update DB from jbpm",
+    "icon" : "defaultservicenodeicon.png"
   ]
+  
 ]

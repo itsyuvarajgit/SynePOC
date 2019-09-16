@@ -27,6 +27,12 @@
             <parameters/>
             <name>DBPollService</name>
         </work-item-handler>
+        <work-item-handler>
+            <resolver>mvel</resolver>
+            <identifier>new com.synetech.jbpm.dblookup.DBPollServiceHandler()</identifier>
+            <parameters/>
+            <name>DBPollStatusUpdateService</name>
+        </work-item-handler>
     </work-item-handlers>
     <environment-entries/>
     <configurations/>
